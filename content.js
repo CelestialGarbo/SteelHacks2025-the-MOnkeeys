@@ -65,9 +65,38 @@ recognition.onerror = (err) => {
 
 recognition.start();
 
+<<<<<<< Updated upstream
 // Listen for messages from background
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "STT_CAPTION") {
     window.updateCaptions(message.text);
   }
+=======
+let buttons = document.createElement("div");
+buttons.style.position = "fixed";
+buttons.style.bottom = "20px";
+buttons.style.left = "20px";
+buttons.style.zindex = "1000000";
+buttons.style.backgroundColor = "rgba(0,0,0,0.7)";
+buttons.style.padding = "5px";
+
+document.body.appendChild(buttons);
+
+
+let startBtn = document.createElement("button");
+startBtn.innerText = "Start";
+//startBtn.style.position = "fixed";
+startBtn.style.bottom = "20px";
+startBtn.style.left = "100px";
+startBtn.style.zIndex = "1000000";
+startBtn.style.margin = "8px 12px";
+startBtn.style.backgroundColor = "#4CAF50";
+startBtn.style.color = "#fff";
+startBtn.style.border = "none";
+startBtn.style.borderRadius = "5px";
+startBtn.style.cursor = "pointer";
+
+startBtn.addEventListener("click", () => {
+  recognition.start();
+>>>>>>> Stashed changes
 });
