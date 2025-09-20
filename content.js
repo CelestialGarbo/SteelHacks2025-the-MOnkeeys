@@ -1,11 +1,51 @@
+// Create caption overlay
 let overlay = document.createElement("div");
 overlay.id = "caption-overlay";
+overlay.innerText = "Waiting for captions...";
+
+// Styling
+
+overlay.style.position = "fixed";
+overlay.style.maxHeight = "40px";
+overlay.style.cursor = "move";
+overlay.style.resize = "both";
+overlay.style.userSelect = "none";
+
 document.body.appendChild(overlay);
 
-// Style applied in overlay.css
-overlay.innerText = "Waiting for Audio...";
+// Drag functionality
+let isDragging = false;
+let offsetX = 0, offsetY = 0;
 
-// Use Web Speech API
+overlay.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  // Get current numeric left/top
+  const rect = overlay.getBoundingClientRect();
+  offsetX = e.clientX - rect.left - rect.width / 2;
+  offsetY = e.clientY - rect.top;
+  e.preventDefault(); // prevent text selection
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (isDragging) {
+    let newLeft = e.clientX - offsetX;
+    let newTop = e.clientY - offsetY;
+    overlay.style.left = `${newLeft}px`;
+    overlay.style.top = `${newTop}px`;
+  }
+});
+
+document.addEventListener("mouseup", () => {
+  isDragging = false;
+});
+
+// Update captions function
+window.updateCaptions = function(text) {
+  overlay.innerText = text;
+  overlay.scrollTop = overlay.scrollHeight;
+};
+
+// Web Speech API
 let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 recognition.continuous = true;
 recognition.interimResults = true;
@@ -16,11 +56,18 @@ recognition.onresult = (event) => {
   for (let i = event.resultIndex; i < event.results.length; i++) {
     transcript += event.results[i][0].transcript + " ";
   }
-  overlay.innerText = transcript;
+  window.updateCaptions(transcript);
 };
 
 recognition.onerror = (err) => {
-  overlay.innerText = "Error: " + err.error;
+  window.updateCaptions("Error: " + err.error);
 };
 
 recognition.start();
+
+// Listen for messages from background
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "STT_CAPTION") {
+    window.updateCaptions(message.text);
+  }
+});
