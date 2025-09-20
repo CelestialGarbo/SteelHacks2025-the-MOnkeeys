@@ -3,7 +3,7 @@ overlay.id = "caption-overlay";
 document.body.appendChild(overlay);
 
 // Style applied in overlay.css
-overlay.innerText = "...";
+overlay.innerText = "Waiting for Audio...";
 
 // Use Web Speech API
 let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
