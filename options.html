@@ -46,6 +46,35 @@
   <button id="test">Test Key</button>
   <p id="status"></p>
 
+  <label for="fontSelector">Choose a font: </label>
+  <select id="fontSelector" onchange="changeFont(this.value)">
+    <option value="'Arial', sans-serif">Arial</option>
+    <option value="'Times New Roman', serif">Times New Roman</option>
+    <option value="'Courier New', monospace">Courier New</option>
+    <option value="'Georgia', serif">Georgia</option>
+    <option value="'Comic Sans MS', sans-serif">Comic Sans Ms</option>
+  </select>
+
+  <script>
+    function changeFont(font) {
+      document.body.style.fontFamily = font;
+    }
+  </script>
+  <script>
+  // Apply saved font when page loads
+  window.onload = function() {
+    const savedFont = localStorage.getItem("selectedFont");
+    if (savedFont) {
+      document.body.style.fontFamily = savedFont;
+      document.getElementById("fontSelector").value = savedFont;
+    }
+  };
+
+  function changeFont(font) {
+    document.body.style.fontFamily = font;
+    localStorage.setItem("selectedFont", font); // Save for later pages
+  }
+</script>
   <script src="options.js"></script>
 </body>
 </html>
