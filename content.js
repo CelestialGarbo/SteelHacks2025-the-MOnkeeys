@@ -4,21 +4,6 @@ let transcriptBuffer = ""; // stores the full final transcript
 let overlay = document.createElement("div");
 overlay.id = "caption-overlay";
 overlay.innerText = "Waiting for captions...";
-overlay.style.position = "fixed";
-overlay.style.left = "20px";
-overlay.style.top = "20px";
-overlay.style.width = "400px";
-overlay.style.maxHeight = "200px";
-overlay.style.backgroundColor = "rgba(0,0,0,0.7)";
-overlay.style.color = "#fff";
-overlay.style.fontSize = "16px";
-overlay.style.padding = "10px";
-overlay.style.overflowY = "auto";
-overlay.style.borderRadius = "8px";
-overlay.style.zIndex = "999999";
-overlay.style.cursor = "move";
-overlay.style.resize = "both";
-overlay.style.userSelect = "none";
 document.body.appendChild(overlay);
 
 // === Dragging Logic (Overlay) ===
