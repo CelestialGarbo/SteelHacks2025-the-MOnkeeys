@@ -3,7 +3,7 @@ let transcriptBuffer = ""; // stores the full final transcript
 // === Caption Overlay ===
 let overlay = document.createElement("div");
 overlay.id = "caption-overlay";
-overlay.innerText = "Waiting for captions...";
+overlay.innerText = "Waiting for audio...";
 document.body.appendChild(overlay);
 
 // === Dragging Logic (Overlay) ===
