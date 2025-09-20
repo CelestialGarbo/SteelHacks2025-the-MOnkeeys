@@ -31,7 +31,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "mixtral-8x7b-32768", // one of Groq's fast LLMs
+          model: "openai/gpt-oss-120b", // one of Groq's fast LLMs
           messages: [
             { role: "system", content: "You are a helpful assistant that summarizes medical conversations clearly and simply. Note that the transcription is speech recognition, so it may have mistakes. Do your best to infer the original meaning in a medical context." },
             { role: "user", content: `Summarize this meeting:\n\n${transcript}` }
