@@ -3,7 +3,7 @@ let transcriptBuffer = ""; // stores the full final transcript
 // === Caption Overlay ===
 let overlay = document.createElement("div");
 overlay.id = "caption-overlay";
-overlay.innerText = "Waiting for captions...";
+overlay.innerText = "Waiting for audio...";
 document.body.appendChild(overlay);
 
 // === Dragging Logic (Overlay) ===
@@ -111,7 +111,8 @@ let saveBtn = makeButton("Save Transcript", "#2196F3", () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `transcript_${new Date().toISOString()}.txt`;
+  const today = new Date().toISOString().split('T')[0]; // "2025-09-20"
+  a.download = `${today}-Meeting-Transcript.txt`;
   a.click();
   URL.revokeObjectURL(url);
 });
