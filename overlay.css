@@ -3,13 +3,13 @@
   bottom: 5%;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.75);
-  color: white;
+  background: rgba(0,0,0,0.6);
+  color: red;
   font-size: 20px;
   padding: 10px 20px;
   border-radius: 12px;
   max-width: 80%;
   text-align: center;
   z-index: 999999;
-  font-family: Arial, sans-serif;
+  font-family: "Comic Sans MS", "Comic Sans", Arial, Helvetica, sans-serif;
 }
