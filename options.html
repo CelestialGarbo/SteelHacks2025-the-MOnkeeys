@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Telehealth Settings</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 12px;
+      padding: 8px 16px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h2>Extension Settings</h2>
+  <label for="apiKey">Groq API Key:</label>
+  <input type="password" id="apiKey" placeholder="Paste your API key here" />
+  <button id="save">Save Key</button>
+  <p id="status"></p>
+
+  <script src="options.js"></script>
+</body>
+</html>
