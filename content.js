@@ -4,18 +4,9 @@ overlay.id = "caption-overlay";
 overlay.innerText = "Waiting for captions...";
 
 // Styling
+
 overlay.style.position = "fixed";
-overlay.style.left = "20px";
-overlay.style.top = "20px";
-overlay.style.width = "400px";
-overlay.style.maxHeight = "200px";
-overlay.style.backgroundColor = "rgba(0,0,0,0.7)";
-overlay.style.color = "#fff";
-overlay.style.fontSize = "16px";
-overlay.style.padding = "10px";
-overlay.style.overflowY = "auto";
-overlay.style.borderRadius = "8px";
-overlay.style.zIndex = "999999";
+overlay.style.maxHeight = "40px";
 overlay.style.cursor = "move";
 overlay.style.resize = "both";
 overlay.style.userSelect = "none";
@@ -30,8 +21,8 @@ overlay.addEventListener("mousedown", (e) => {
   isDragging = true;
   // Get current numeric left/top
   const rect = overlay.getBoundingClientRect();
-  offsetX = e.clientX - rect.left / 2;
-  offsetY = e.clientY - rect.top / 2;
+  offsetX = e.clientX - rect.left - rect.width / 2;
+  offsetY = e.clientY - rect.top;
   e.preventDefault(); // prevent text selection
 });
 
