@@ -11,5 +11,9 @@
   max-width: 80%;
   text-align: center;
   z-index: 999999;
+  max-height: 80px;
+  cursor: "move";
+  resize: "both";
+  user-select: none;
   font-family: "Comic Sans MS", "Comic Sans", Arial, Helvetica, sans-serif;
 }
