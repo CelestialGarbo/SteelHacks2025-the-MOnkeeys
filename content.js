@@ -1,49 +1,35 @@
-// Create caption overlay
+let transcriptBuffer = ""; // stores the full final transcript
+
+// Create overlay (fixed version)
 let overlay = document.createElement("div");
 overlay.id = "caption-overlay";
 overlay.innerText = "Waiting for captions...";
 
-// Styling
-
-overlay.style.position = "fixed";
-overlay.style.maxHeight = "40px";
-overlay.style.cursor = "move";
-overlay.style.resize = "both";
-overlay.style.userSelect = "none";
-
 document.body.appendChild(overlay);
 
-// Drag functionality
-let isDragging = false;
-let offsetX = 0, offsetY = 0;
-
+// Dragging logic
+let isDragging = false, offsetX = 0, offsetY = 0;
 overlay.addEventListener("mousedown", (e) => {
   isDragging = true;
-  // Get current numeric left/top
   const rect = overlay.getBoundingClientRect();
   offsetX = e.clientX - rect.left - rect.width / 2;
   offsetY = e.clientY - rect.top;
-  e.preventDefault(); // prevent text selection
+  e.preventDefault();
 });
-
 document.addEventListener("mousemove", (e) => {
   if (isDragging) {
-    let newLeft = e.clientX - offsetX;
-    let newTop = e.clientY - offsetY;
-    overlay.style.left = `${newLeft}px`;
-    overlay.style.top = `${newTop}px`;
+    overlay.style.left = `${e.clientX - offsetX}px`;
+    overlay.style.top = `${e.clientY - offsetY}px`;
   }
 });
+document.addEventListener("mouseup", () => isDragging = false);
 
-document.addEventListener("mouseup", () => {
-  isDragging = false;
-});
-
-// Update captions function
-window.updateCaptions = function(text) {
-  overlay.innerText = text;
+// Function to update overlay and scroll
+function updateOverlay(interimText) {
+  overlay.innerText = transcriptBuffer + interimText;
+  // Always scroll to bottom
   overlay.scrollTop = overlay.scrollHeight;
-};
+}
 
 // Web Speech API
 let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -52,26 +38,31 @@ recognition.interimResults = true;
 recognition.lang = "en-US";
 
 recognition.onresult = (event) => {
-  let transcript = "";
+  let interimTranscript = "";
   for (let i = event.resultIndex; i < event.results.length; i++) {
-    transcript += event.results[i][0].transcript + " ";
+    let result = event.results[i];
+    if (result.isFinal) {
+      // Append final results to buffer with a line break
+      transcriptBuffer += result[0].transcript + "\n";
+    } else {
+      // Collect interim text
+      interimTranscript += result[0].transcript + " ";
+    }
   }
-  window.updateCaptions(transcript);
+  updateOverlay(interimTranscript);
 };
 
 recognition.onerror = (err) => {
-  window.updateCaptions("Error: " + err.error);
+  overlay.innerText = "Error: " + err.error;
 };
 
-recognition.start();
-
-<<<<<<< Updated upstream
 // Listen for messages from background
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "STT_CAPTION") {
     window.updateCaptions(message.text);
   }
-=======
+});
+
 let buttons = document.createElement("div");
 buttons.style.position = "fixed";
 buttons.style.bottom = "20px";
@@ -98,5 +89,52 @@ startBtn.style.cursor = "pointer";
 
 startBtn.addEventListener("click", () => {
   recognition.start();
->>>>>>> Stashed changes
 });
+
+buttons.appendChild(startBtn);
+
+
+let stopBtn = document.createElement("button");
+stopBtn.innerText = "Stop";
+//stopBtn.style.position = "fixed";
+stopBtn.style.bottom = "20px";
+stopBtn.style.left = "180px";
+stopBtn.style.zIndex = "1000000";
+stopBtn.style.margin = "8px 12px";
+stopBtn.style.backgroundColor = "#4CAF50";
+stopBtn.style.color = "#fff";
+stopBtn.style.border = "none";
+stopBtn.style.borderRadius = "5px";
+stopBtn.style.cursor = "pointer";
+
+stopBtn.addEventListener("click", () => {
+  recognition.stop();
+});
+
+buttons.appendChild(stopBtn);
+
+// Save transcript button
+let saveBtn = document.createElement("button");
+saveBtn.innerText = "Save Transcript";
+// saveBtn.style.position = "fixed";
+saveBtn.style.bottom = "20px";
+saveBtn.style.left = "20px";
+saveBtn.style.zIndex = "1000000";
+saveBtn.style.margin = "8px 12px";
+saveBtn.style.backgroundColor = "#4CAF50";
+saveBtn.style.color = "#fff";
+saveBtn.style.border = "none";
+saveBtn.style.borderRadius = "5px";
+saveBtn.style.cursor = "pointer";
+
+saveBtn.addEventListener("click", () => {
+  const blob = new Blob([transcriptBuffer], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `transcript_${new Date().toISOString()}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+buttons.appendChild(saveBtn);
