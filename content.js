@@ -1,13 +1,27 @@
 let transcriptBuffer = ""; // stores the full final transcript
 
-// Create overlay (fixed version)
+// === Caption Overlay ===
 let overlay = document.createElement("div");
 overlay.id = "caption-overlay";
 overlay.innerText = "Waiting for captions...";
-
+overlay.style.position = "fixed";
+overlay.style.left = "20px";
+overlay.style.top = "20px";
+overlay.style.width = "400px";
+overlay.style.maxHeight = "200px";
+overlay.style.backgroundColor = "rgba(0,0,0,0.7)";
+overlay.style.color = "#fff";
+overlay.style.fontSize = "16px";
+overlay.style.padding = "10px";
+overlay.style.overflowY = "auto";
+overlay.style.borderRadius = "8px";
+overlay.style.zIndex = "999999";
+overlay.style.cursor = "move";
+overlay.style.resize = "both";
+overlay.style.userSelect = "none";
 document.body.appendChild(overlay);
 
-// Dragging logic
+// === Dragging Logic (Overlay) ===
 let isDragging = false, offsetX = 0, offsetY = 0;
 overlay.addEventListener("mousedown", (e) => {
   isDragging = true;
@@ -24,14 +38,15 @@ document.addEventListener("mousemove", (e) => {
 });
 document.addEventListener("mouseup", () => isDragging = false);
 
-// Function to update overlay and scroll
+// === Update Overlay & Scroll ===
 function updateOverlay(interimText) {
   overlay.innerText = transcriptBuffer + interimText;
-  // Always scroll to bottom
-  overlay.scrollTop = overlay.scrollHeight;
+  setTimeout(() => {
+    overlay.scrollTop = overlay.scrollHeight;
+  }, 0);
 }
 
-// Web Speech API
+// === Web Speech API ===
 let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 recognition.continuous = true;
 recognition.interimResults = true;
@@ -42,10 +57,8 @@ recognition.onresult = (event) => {
   for (let i = event.resultIndex; i < event.results.length; i++) {
     let result = event.results[i];
     if (result.isFinal) {
-      // Append final results to buffer with a line break
       transcriptBuffer += result[0].transcript + "\n";
     } else {
-      // Collect interim text
       interimTranscript += result[0].transcript + " ";
     }
   }
@@ -56,78 +69,59 @@ recognition.onerror = (err) => {
   overlay.innerText = "Error: " + err.error;
 };
 
-// Listen for messages from background
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "STT_CAPTION") {
-    window.updateCaptions(message.text);
-  }
-});
-
+// === Buttons Container ===
 let buttons = document.createElement("div");
 buttons.style.position = "fixed";
 buttons.style.bottom = "20px";
 buttons.style.left = "20px";
-buttons.style.zindex = "1000000";
+buttons.style.zIndex = "1000000";
 buttons.style.backgroundColor = "rgba(0,0,0,0.7)";
-buttons.style.padding = "5px";
-
+buttons.style.padding = "8px 12px";
+buttons.style.borderRadius = "8px";
+buttons.style.display = "flex";
+buttons.style.gap = "10px";
+buttons.style.cursor = "move"; // show it's draggable
 document.body.appendChild(buttons);
 
-
-let startBtn = document.createElement("button");
-startBtn.innerText = "Start";
-//startBtn.style.position = "fixed";
-startBtn.style.bottom = "20px";
-startBtn.style.left = "100px";
-startBtn.style.zIndex = "1000000";
-startBtn.style.margin = "8px 12px";
-startBtn.style.backgroundColor = "#4CAF50";
-startBtn.style.color = "#fff";
-startBtn.style.border = "none";
-startBtn.style.borderRadius = "5px";
-startBtn.style.cursor = "pointer";
-
-startBtn.addEventListener("click", () => {
-  recognition.start();
+// === Dragging Logic (Buttons) ===
+let isDraggingButtons = false, btnOffsetX = 0, btnOffsetY = 0;
+buttons.addEventListener("mousedown", (e) => {
+  isDraggingButtons = true;
+  const rect = buttons.getBoundingClientRect();
+  btnOffsetX = e.clientX - rect.left;
+  btnOffsetY = e.clientY - rect.top;
+  e.preventDefault();
 });
-
-buttons.appendChild(startBtn);
-
-
-let stopBtn = document.createElement("button");
-stopBtn.innerText = "Stop";
-//stopBtn.style.position = "fixed";
-stopBtn.style.bottom = "20px";
-stopBtn.style.left = "180px";
-stopBtn.style.zIndex = "1000000";
-stopBtn.style.margin = "8px 12px";
-stopBtn.style.backgroundColor = "#4CAF50";
-stopBtn.style.color = "#fff";
-stopBtn.style.border = "none";
-stopBtn.style.borderRadius = "5px";
-stopBtn.style.cursor = "pointer";
-
-stopBtn.addEventListener("click", () => {
-  recognition.stop();
+document.addEventListener("mousemove", (e) => {
+  if (isDraggingButtons) {
+    buttons.style.left = `${e.clientX - btnOffsetX}px`;
+    buttons.style.top = `${e.clientY - btnOffsetY}px`;
+    buttons.style.bottom = "auto"; // unset bottom so it can move freely
+  }
 });
+document.addEventListener("mouseup", () => isDraggingButtons = false);
 
-buttons.appendChild(stopBtn);
+// === Helper: Button Factory ===
+function makeButton(label, color, onClick) {
+  let btn = document.createElement("button");
+  btn.innerText = label;
+  btn.style.padding = "6px 12px";
+  btn.style.backgroundColor = color;
+  btn.style.color = "#fff";
+  btn.style.border = "none";
+  btn.style.borderRadius = "5px";
+  btn.style.cursor = "pointer";
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation(); // prevent drag when clicking
+    onClick();
+  });
+  return btn;
+}
 
-// Save transcript button
-let saveBtn = document.createElement("button");
-saveBtn.innerText = "Save Transcript";
-// saveBtn.style.position = "fixed";
-saveBtn.style.bottom = "20px";
-saveBtn.style.left = "20px";
-saveBtn.style.zIndex = "1000000";
-saveBtn.style.margin = "8px 12px";
-saveBtn.style.backgroundColor = "#4CAF50";
-saveBtn.style.color = "#fff";
-saveBtn.style.border = "none";
-saveBtn.style.borderRadius = "5px";
-saveBtn.style.cursor = "pointer";
-
-saveBtn.addEventListener("click", () => {
+// === Buttons ===
+let startBtn = makeButton("Start", "#4CAF50", () => recognition.start());
+let stopBtn = makeButton("Stop", "#f44336", () => recognition.stop());
+let saveBtn = makeButton("Save Transcript", "#2196F3", () => {
   const blob = new Blob([transcriptBuffer], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -137,4 +131,7 @@ saveBtn.addEventListener("click", () => {
   URL.revokeObjectURL(url);
 });
 
+// Add buttons to container
+buttons.appendChild(startBtn);
+buttons.appendChild(stopBtn);
 buttons.appendChild(saveBtn);
