@@ -111,7 +111,8 @@ let saveBtn = makeButton("Save Transcript", "#2196F3", () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `transcript_${new Date().toISOString()}.txt`;
+  const today = new Date().toISOString().split('T')[0]; // "2025-09-20"
+  a.download = `${today}-Meeting-Transcript.txt`;
   a.click();
   URL.revokeObjectURL(url);
 });
