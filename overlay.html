@@ -7,5 +7,13 @@
 </head>
 <body>
   <script src="content.js"></script>
+  <script>
+  chrome.storage.sync.get('chosenFont', (data) => {
+    if (data.chosenFont) {
+      document.body.style.fontFamily = data.chosenFont;
+    }
+  });
+</script>
+
 </body>
 </html>
