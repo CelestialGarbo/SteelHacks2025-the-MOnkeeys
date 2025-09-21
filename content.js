@@ -141,16 +141,16 @@ let saveBtn = makeButton("Save Transcript", "#2196F3", () => {
 });
 
 let summarizeBtn = makeButton("Summarize", "#FF9800", () => {
-  chrome.runtime.sendMessage(
-    { type: "SUMMARIZE_TRANSCRIPT", transcript: transcriptBuffer },
-    (response) => {
-      if (response.error) {
-        alert("Error: " + response.error);
-      } else {
-        alert("Summary:\n\n" + response.summary);
-      }
-    }
-  );
+ // chrome.runtime.sendMessage(
+   // { type: "SUMMARIZE_TRANSCRIPT", transcript: transcriptBuffer },
+   // (response) => {
+    //  if (response.error) {
+     //   alert("Error: " + response.error);
+      //} else {
+       // alert("Summary:\n\n" + response.summary);
+     // }
+   // }
+ // );
 });
 
 // Add buttons to container
