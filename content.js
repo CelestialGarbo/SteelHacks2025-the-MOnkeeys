@@ -23,13 +23,36 @@ document.addEventListener("mousemove", (e) => {
 });
 document.addEventListener("mouseup", () => isDragging = false);
 
-// === Update Overlay & Scroll ===
 function updateOverlay(interimText) {
-  overlay.innerText = transcriptBuffer + interimText;
-  setTimeout(() => {
-    overlay.scrollTop = overlay.scrollHeight;
-  }, 0);
+  // Remove previous interim line, leave all final lines intact
+  const lastInterim = overlay.querySelector(".interim");
+  if (lastInterim) overlay.removeChild(lastInterim);
+
+  // Add new interim text
+  if (interimText.trim() !== "") {
+    let p = document.createElement("p");
+    p.className = "interim";
+    p.innerText = interimText;
+    overlay.appendChild(p);
+  }
+
+  // Make sure all new finalized transcript lines are added
+  // We track how many final lines are already in the overlay
+  const finalCount = overlay.querySelectorAll(".final").length;
+  const transcriptLines = transcriptBuffer.trim().split("\n");
+
+  for (let i = finalCount; i < transcriptLines.length; i++) {
+    if (transcriptLines[i].trim() === "") continue; // skip empty lines
+    let p = document.createElement("p");
+    p.className = "final";
+    p.innerText = transcriptLines[i];
+    overlay.appendChild(p);
+  }
+
+  // Auto-scroll to newest caption
+  overlay.scrollTop = overlay.scrollHeight;
 }
+
 
 // === Web Speech API ===
 let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -86,7 +109,7 @@ document.addEventListener("mousemove", (e) => {
 });
 document.addEventListener("mouseup", () => isDraggingButtons = false);
 
-// === Helper: Button Factory ===
+// Button Helper
 function makeButton(label, color, onClick) {
   let btn = document.createElement("button");
   btn.innerText = label;
