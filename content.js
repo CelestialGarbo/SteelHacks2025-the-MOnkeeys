@@ -158,3 +158,7 @@ buttons.appendChild(startBtn);
 buttons.appendChild(stopBtn);
 buttons.appendChild(saveBtn);
 buttons.appendChild(summarizeBtn);
+
+document.getElementById('closeBtn').addEventListener('click', () => {
+  chrome.runtime.sendMessage({ action: 'close_tab' });
+});
