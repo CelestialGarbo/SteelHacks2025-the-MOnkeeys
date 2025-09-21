@@ -186,3 +186,19 @@ closeBtn.addEventListener('click', () => {
     overlay.remove();
     buttons.remove();
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    function downloadText() {
+        const text = "The doctor, who operates most mornings, arrived at the hospital before sunrise. They are scheduled to perform an open heart surgery [a surgical procedure in which the chest is opened and surgery is performed on the heart muscle, valves, or arteries] and a minimally invasive mitral valve repair [a surgical procedure to repair the heart's mitral valve through a small incision] on a patient.When addressing the patient, the doctor acknowledged their nervousness about the surgery, telling them it's 'half the battle just showing up.' He reassured the patient that he wasn't nervous and confirmed that they would be proceeding with the mitral valve repair through a small incision as previously discussed.";
+        const filename = "Meeting-Summary.txt";
+        const blob = new Blob([text], { type: "text/plain" });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        
+        URL.revokeObjectURL(link.href);
+    }
+
+    summarizeBtn.addEventListener('click', downloadText);
+});
