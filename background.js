@@ -1,17 +1,18 @@
-chrome.action.onClicked.addListener((tab) => {
-  chrome.tabCapture.capture({ audio: true, video: false }, (stream) => {
-    const output = new AudioContext();
-    const source = output.createMediaStreamSource(stream);
-    source.connect(output.destination);
-    if (stream) {
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: startCaptions,
-        args: [stream.id] // we'll use this in content.js
-      });
-    }
-  });
-});
+//chrome.action.onClicked.addListener((tab) => {
+  //chrome.tabCapture.capture({ audio: true, video: false }, (stream) => \
+ // {
+   // const output = new AudioContext();
+    //const source = output.createMediaStreamSource(stream);
+    //source.connect(output.destination);
+    //if (stream) {
+     // chrome.scripting.executeScript({
+       // target: { tabId: tab.id },
+        //func: startCaptions,
+        //args: [stream.id] // we'll use this in content.js
+      //});
+    //}
+  //});
+//});
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.type === "SUMMARIZE_TRANSCRIPT") {
