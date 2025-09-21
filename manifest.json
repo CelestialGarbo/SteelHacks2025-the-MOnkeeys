@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Caption Everywhere",
+  "name": "TelAssist",
   "version": "1.0",
-  "description": "Real-time captions for any audio or video in the browser",
+  "description": "Telemedicine assitant with real-time captioning, accesibility options, and AI powered summaries",
   "permissions": ["tabCapture", "scripting", "activeTab", "storage"],
   "host_permissions": ["https://api.groq.com/"],
   "options_page": "options.html",
