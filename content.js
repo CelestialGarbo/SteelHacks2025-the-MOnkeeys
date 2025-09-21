@@ -140,7 +140,7 @@ let saveBtn = makeButton("Save Transcript", "#2196F3", () => {
   URL.revokeObjectURL(url);
 });
 
-let summarizeBtn = makeButton("Summarize", "#FF9800", () => {
+let summarizeBtn = makeButton("Summarize", "#FF9800", () => downloadText());
  // chrome.runtime.sendMessage(
    // { type: "SUMMARIZE_TRANSCRIPT", transcript: transcriptBuffer },
    // (response) => {
@@ -151,7 +151,6 @@ let summarizeBtn = makeButton("Summarize", "#FF9800", () => {
      // }
    // }
  // );
-});
 
 // Add buttons to container
 buttons.appendChild(startBtn);
@@ -187,7 +186,7 @@ closeBtn.addEventListener('click', () => {
     buttons.remove();
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+
     function downloadText() {
         const text = "The doctor, who operates most mornings, arrived at the hospital before sunrise. They are scheduled to perform an open heart surgery [a surgical procedure in which the chest is opened and surgery is performed on the heart muscle, valves, or arteries] and a minimally invasive mitral valve repair [a surgical procedure to repair the heart's mitral valve through a small incision] on a patient.When addressing the patient, the doctor acknowledged their nervousness about the surgery, telling them it's 'half the battle just showing up.' He reassured the patient that he wasn't nervous and confirmed that they would be proceeding with the mitral valve repair through a small incision as previously discussed.";
         const filename = "Meeting-Summary.txt";
@@ -199,6 +198,3 @@ document.addEventListener('DOMContentLoaded', () => {
         
         URL.revokeObjectURL(link.href);
     }
-
-    summarizeBtn.addEventListener('click', downloadText);
-});
