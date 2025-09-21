@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "Telemedicine assitant with real-time captioning, accesibility options, and AI powered summaries",
   "permissions": ["tabCapture", "scripting", "activeTab", "storage"],
-  "host_permissions": ["https://api.groq.com/"],
+  "host_permissions": ["https://generativelanguage.googleapis.com/*"],
   "options_page": "options.html",
   "background": {
     "service_worker": "background.js"

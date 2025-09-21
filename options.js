@@ -1,8 +1,8 @@
 // Load stored key when options page opens
 document.addEventListener("DOMContentLoaded", async () => {
-  const { groqKey } = await chrome.storage.local.get("groqKey");
-  if (groqKey) {
-    document.getElementById("apiKey").value = groqKey;
+  const { geminiKey } = await chrome.storage.local.get("geminiKey");
+  if (geminiKey) {
+    document.getElementById("apiKey").value = geminiKey;
   }
 });
 
@@ -15,7 +15,7 @@ document.getElementById("save").addEventListener("click", async () => {
     return;
   }
 
-  await chrome.storage.local.set({ groqKey: apiKey });
+  await chrome.storage.local.set({ geminiKey: apiKey });
   document.getElementById("status").innerText = "Key saved!";
 });
 
@@ -31,25 +31,33 @@ document.getElementById("test").addEventListener("click", async () => {
   document.getElementById("status").innerText = "Testing key...";
 
   try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "openai/gpt-oss-120b",
-        messages: [{ role: "user", content: "Say 'Hello, your key works!'" }],
-        max_tokens: 20
-      })
-    });
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          contents: [
+            { role: "system", content: "You are a helpful assistant." },
+            { role: "user", content: "Say 'The key works'" }
+          ],
+          temperature: 0.3,
+          max_output_tokens: 50
+        })
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || "No response.";
+
+    // Gemini returns an array of candidates
+    const reply = data.candidates?.[0]?.content || "No response.";
 
     document.getElementById("status").innerText = "Key works! Response: " + reply;
   } catch (err) {
