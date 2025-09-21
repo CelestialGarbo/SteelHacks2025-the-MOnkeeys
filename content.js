@@ -23,13 +23,36 @@ document.addEventListener("mousemove", (e) => {
 });
 document.addEventListener("mouseup", () => isDragging = false);
 
-// === Update Overlay & Scroll ===
 function updateOverlay(interimText) {
-  overlay.innerText = transcriptBuffer + interimText;
-  setTimeout(() => {
-    overlay.scrollTop = overlay.scrollHeight;
-  }, 0);
+  // Remove previous interim line, leave all final lines intact
+  const lastInterim = overlay.querySelector(".interim");
+  if (lastInterim) overlay.removeChild(lastInterim);
+
+  // Add new interim text
+  if (interimText.trim() !== "") {
+    let p = document.createElement("p");
+    p.className = "interim";
+    p.innerText = interimText;
+    overlay.appendChild(p);
+  }
+
+  // Make sure all new finalized transcript lines are added
+  // We track how many final lines are already in the overlay
+  const finalCount = overlay.querySelectorAll(".final").length;
+  const transcriptLines = transcriptBuffer.trim().split("\n");
+
+  for (let i = finalCount; i < transcriptLines.length; i++) {
+    if (transcriptLines[i].trim() === "") continue; // skip empty lines
+    let p = document.createElement("p");
+    p.className = "final";
+    p.innerText = transcriptLines[i];
+    overlay.appendChild(p);
+  }
+
+  // Auto-scroll to newest caption
+  overlay.scrollTop = overlay.scrollHeight;
 }
+
 
 // === Web Speech API ===
 let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -135,3 +158,31 @@ buttons.appendChild(startBtn);
 buttons.appendChild(stopBtn);
 buttons.appendChild(saveBtn);
 buttons.appendChild(summarizeBtn);
+
+const btn = document.createElement('button');
+btn.textContent = '✖';
+btn.style.position = 'fixed';
+btn.style.bottom = '20px';
+btn.style.right = '20px';
+btn.style.backgroundColor = 'red';
+btn.style.color = 'white';
+btn.style.border = 'none';
+btn.style.borderRadius = '50%';
+btn.style.width = '40px';
+btn.style.height = '40px';
+btn.style.fontSize = '20px';
+btn.style.cursor = 'pointer';
+btn.style.zIndex = '9999';
+btn.id = 'closeBtn'; // assign an ID just in case
+document.body.appendChild(btn);
+
+// Hide the button on click
+closeBtn.addEventListener('click', () => {
+    closeBtn.remove(); 
+    startBtn.remove();
+    stopBtn.remove();
+    saveBtn.remove();
+    summarizeBtn.remove();
+    overlay.remove();
+    buttons.remove();
+});

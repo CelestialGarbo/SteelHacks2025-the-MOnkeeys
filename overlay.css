@@ -12,6 +12,8 @@
   text-align: center;
   z-index: 999999;
   max-height: 80px;
+  overflow-y: auto;
+  line-height: 1.4;
   cursor: "move";
   resize: "both";
   user-select: none;
