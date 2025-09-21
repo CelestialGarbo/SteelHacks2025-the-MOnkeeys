@@ -159,6 +159,30 @@ buttons.appendChild(stopBtn);
 buttons.appendChild(saveBtn);
 buttons.appendChild(summarizeBtn);
 
-document.getElementById('closeBtn').addEventListener('click', () => {
-  chrome.runtime.sendMessage({ action: 'close_tab' });
+const btn = document.createElement('button');
+btn.textContent = '✖';
+btn.style.position = 'fixed';
+btn.style.bottom = '20px';
+btn.style.right = '20px';
+btn.style.backgroundColor = 'red';
+btn.style.color = 'white';
+btn.style.border = 'none';
+btn.style.borderRadius = '50%';
+btn.style.width = '40px';
+btn.style.height = '40px';
+btn.style.fontSize = '20px';
+btn.style.cursor = 'pointer';
+btn.style.zIndex = '9999';
+btn.id = 'closeBtn'; // assign an ID just in case
+document.body.appendChild(btn);
+
+// Hide the button on click
+closeBtn.addEventListener('click', () => {
+    closeBtn.remove(); 
+    startBtn.remove();
+    stopBtn.remove();
+    saveBtn.remove();
+    summarizeBtn.remove();
+    overlay.remove();
+    buttons.remove();
 });

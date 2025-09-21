@@ -59,9 +59,3 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 function startCaptions(streamId) {
   console.log("Captions starting with stream:", streamId);
 }
-
-chrome.runtime.onMessage.addListener((msg, sender) => {
-  if (msg.action === 'close_tab') {
-    chrome.tabs.remove(sender.tab.id);
-  }
-});
